@@ -6,6 +6,10 @@ type Calculator struct {
 	result int
 }
 
+func (c *Calculator) Press(x int) {
+	c.result = x
+}
+
 func (c *Calculator) Add(x int) {
 	c.result += x
 }
@@ -20,10 +24,6 @@ func (c *Calculator) MultiplyBy(x int) error {
 	}
 	c.result *= x
 	return nil
-}
-
-func (c *Calculator) Press(x int) {
-	c.result = x
 }
 
 func (c *Calculator) Clear() {

@@ -3,37 +3,41 @@ package calc_test
 import (
 	"fmt"
 
-	"github.com/DATA-DOG/godog"
+	"github.com/cucumber/godog"
 	calc "github.com/devdinu/go-play/calculator"
 )
 
 type CalcSuite struct {
-	*godog.Suite
-	calc *calc.Calculator
+	Suite *godog.ScenarioContext
+	calc  *calc.Calculator
 }
 
-func (cs *CalcSuite) calculatorIsCleared() error {
+func (cs CalcSuite) calculatorIsCleared() error {
 	cs.calc.Clear()
 	return nil
 }
 
-func (cs *CalcSuite) iPress(num int) error {
-	cs.calc.Press(num)
+func (cs CalcSuite) iAdd(arg1 int) error {
+	cs.calc.Add(arg1)
 	return nil
 }
 
-func (cs *CalcSuite) iAdd(num int) error {
-	cs.calc.Add(num)
+func (cs CalcSuite) iMultiplyBy(arg1 int) error {
+	cs.calc.MultiplyBy(arg1)
 	return nil
 }
 
-func (cs *CalcSuite) iSubtract(num int) error {
-	cs.calc.Sub(num)
+func (cs CalcSuite) iPress(arg1 int) error {
+	cs.calc.Press(arg1)
 	return nil
 }
 
-// Assertions
-func (cs *CalcSuite) theResultShouldBe(expectedResult int) error {
+func (cs CalcSuite) iSubtract(arg1 int) error {
+	cs.calc.Sub(arg1)
+	return nil
+}
+
+func (cs CalcSuite) theResultShouldBe(expectedResult int) error {
 	result := cs.calc.Result()
 	if result == expectedResult {
 		return nil
@@ -41,21 +45,16 @@ func (cs *CalcSuite) theResultShouldBe(expectedResult int) error {
 	return fmt.Errorf("%d doesn't match expectation: %d", result, expectedResult)
 }
 
-func (cs *CalcSuite) iMultiplyBy(factor int) error {
-	return cs.calc.MultiplyBy(factor)
-}
-
-func FeatureContext(suite *godog.Suite) {
-	s := CalcSuite{
-		calc:  new(calc.Calculator),
-		Suite: suite,
+func InitializeScenario(ctx *godog.ScenarioContext) {
+	suite := &CalcSuite{
+		calc:  &calc.Calculator{},
+		Suite: ctx,
 	}
-	suite.Step(`^calculator is cleared$`, s.calculatorIsCleared)
 
-	suite.Step(`^i press (\d+)$`, s.iPress)
-	suite.Step(`^i add (\d+)$`, s.iAdd)
-	suite.Step(`^i subtract (\d+)$`, s.iSubtract)
-	suite.Step(`^i multiply by (\d+)$`, s.iMultiplyBy)
-
-	suite.Step(`^the result should be (\d+)$`, s.theResultShouldBe)
+	ctx.Step(`^calculator is cleared$`, suite.calculatorIsCleared)
+	ctx.Step(`^i add (\d+)$`, suite.iAdd)
+	ctx.Step(`^i multiply by (\d+)$`, suite.iMultiplyBy)
+	ctx.Step(`^i press (\d+)$`, suite.iPress)
+	ctx.Step(`^i subtract (\d+)$`, suite.iSubtract)
+	ctx.Step(`^the result should be (\d+)$`, suite.theResultShouldBe)
 }
